@@ -12234,6 +12234,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     props: ['id'],
     methods: {
         listen: function listen() {
+            var _this = this;
+
             Echo.private('App.User.' + this.id).notification(function (notification) {
                 noty({
                     layout: 'topRight',
@@ -12252,6 +12254,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     closeWith: ['click']
                 });
                 document.getElementById("noty_audio").play();
+                _this.status = notification.status;
                 console.log(notification);
             });
         }

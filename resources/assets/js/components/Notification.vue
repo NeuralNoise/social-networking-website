@@ -31,6 +31,7 @@
                                 closeWith: ['click']
                             });
                             document.getElementById("noty_audio").play();
+                            this.status = notification.status;
                             console.log(notification);
                         })
             }
