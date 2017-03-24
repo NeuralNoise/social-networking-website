@@ -51,6 +51,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('add_friend/{id}', 'FriendshipController@addFriend');
     Route::get('accept_friend/{id}', 'FriendshipController@acceptFriend');
 
+    Route::get('/get_unread', function() {
+        return Auth::user()->unreadNotifications;
+    });
+
 
 
 });
