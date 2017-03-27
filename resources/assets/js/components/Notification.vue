@@ -30,6 +30,7 @@
                                 },
                                 closeWith: ['click']
                             });
+                            this.$store.commit('addNotifications', notification);
                             document.getElementById("noty_audio").play();
                             this.status = notification.status;
                             console.log(notification);

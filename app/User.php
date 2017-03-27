@@ -6,12 +6,14 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Traits\Friendable;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
     use Notifiable;
     use Friendable;
-
+    use Searchable;
     /**
      * The attributes that are mass assignable.
      *
@@ -32,5 +34,15 @@ class User extends Authenticatable
     
     public function profile() {
         return $this->hasOne('App\Profile');
+    }
+
+    public function  posts() {
+        return $this->hasMany('App\Post');
+    }
+
+
+
+    public function getAvatarAttribute($avatar) {
+        return asset(Storage::url($avatar));
     }
 }

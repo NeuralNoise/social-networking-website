@@ -55,6 +55,17 @@ Route::group(['middleware' => 'auth'], function () {
         return Auth::user()->unreadNotifications;
     });
 
+    Route::get('/notifications', 'HomeController@notifications')->name('notifications');
 
+    Route::post('/create/post', 'PostsController@store');
+
+    Route::get('/feed', 'FeedsController@feed')->name('feed');
+
+    Route::get('/get_auth_user_data', function() {
+       return Auth::user();
+    });
+
+    Route::get('/like/{id}', 'LikeController@like');
+    Route::get('/unlike/{id}', 'LikeController@unlike');
 
 });
