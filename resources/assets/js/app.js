@@ -20,6 +20,8 @@ Vue.component('post', require('./components/Post.vue'));
 Vue.component('feed', require('./components/Feed.vue'));
 Vue.component('init', require('./components/Init.vue'));
 Vue.component('search', require('./components/Search.vue'));
+Vue.component('friend-list', require('./components/FriendList.vue'));
+Vue.component('users-feed', require('./components/UsersFeed.vue'));
 
 import  {store} from  './store'
 

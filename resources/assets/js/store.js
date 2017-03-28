@@ -9,6 +9,8 @@ export const store = new Vuex.Store({
         notifications : [],
         posts : [],
         auth_user : {},
+        friend_list_id : [],
+        friend_list : [],
     },
     getters: {
         allNotifications(state) {
@@ -19,6 +21,12 @@ export const store = new Vuex.Store({
         },
         allPosts(state) {
             return state.posts;
+        },
+        get_friends_list(state) {
+            return state.friend_list;
+        },
+        get_auth_user_id(state) {
+            return state.auth_user.id;
         }
     },
     mutations : {
@@ -28,8 +36,19 @@ export const store = new Vuex.Store({
         addPosts(state, post) {
             state.posts.push(post);
         },
+        update_posts(state, post) {
+            var start_index = 0;
+            var number_of_elements_to_remove = 0;
+            state.posts.splice(start_index, number_of_elements_to_remove,post);
+        },
         auth_user_data(state, user) {
             state.auth_user = user;
+        },
+        populate_friend_list_id(state, user_id) {
+            state.friend_list_id.push(user_id);
+        },
+        populate_friend_list(state, user) {
+            state.friend_list.push(user);
         },
         update_post_likes(state, payload) {
             var post = state.posts.find( (post) => {

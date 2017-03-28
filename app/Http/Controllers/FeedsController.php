@@ -33,4 +33,17 @@ class FeedsController extends Controller
         return $feed;
 
     }
+
+
+    public function users_feed($id){
+        $user = User::find($id);
+
+        $feed = array();
+
+        foreach ($user->posts as $post){
+            array_push($feed, $post);
+        }
+
+        return $feed;
+    }
 }

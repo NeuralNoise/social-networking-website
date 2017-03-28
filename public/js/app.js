@@ -20546,6 +20546,8 @@ Vue.component('post', __webpack_require__(61));
 Vue.component('feed', __webpack_require__(63));
 Vue.component('init', __webpack_require__(76));
 Vue.component('search', __webpack_require__(78));
+Vue.component('friend-list', __webpack_require__(118));
+Vue.component('users-feed', __webpack_require__(124));
 
 
 
@@ -21647,7 +21649,9 @@ var store = new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
     state: {
         notifications: [],
         posts: [],
-        auth_user: {}
+        auth_user: {},
+        friend_list_id: [],
+        friend_list: []
     },
     getters: {
         allNotifications: function allNotifications(state) {
@@ -21658,6 +21662,12 @@ var store = new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
         },
         allPosts: function allPosts(state) {
             return state.posts;
+        },
+        get_friends_list: function get_friends_list(state) {
+            return state.friend_list;
+        },
+        get_auth_user_id: function get_auth_user_id(state) {
+            return state.auth_user.id;
         }
     },
     mutations: {
@@ -21667,8 +21677,19 @@ var store = new __WEBPACK_IMPORTED_MODULE_0_vuex__["a" /* default */].Store({
         addPosts: function addPosts(state, post) {
             state.posts.push(post);
         },
+        update_posts: function update_posts(state, post) {
+            var start_index = 0;
+            var number_of_elements_to_remove = 0;
+            state.posts.splice(start_index, number_of_elements_to_remove, post);
+        },
         auth_user_data: function auth_user_data(state, user) {
             state.auth_user = user;
+        },
+        populate_friend_list_id: function populate_friend_list_id(state, user_id) {
+            state.friend_list_id.push(user_id);
+        },
+        populate_friend_list: function populate_friend_list(state, user) {
+            state.friend_list.push(user);
         },
         update_post_likes: function update_post_likes(state, payload) {
             var post = state.posts.find(function (post) {
@@ -49088,8 +49109,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             axios.post('/create/post', { content: this.content }).then(function (response) {
-                console.log(response);
                 _this.content = "";
+                _this.$store.commit('update_posts', response.data);
                 noty({
                     layout: 'topRight',
                     type: 'success',
@@ -49280,19 +49301,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
+        var _this = this;
+
         this.get_feed();
+        var channel = Echo.private('new-post-create').listen('NewPostCreated', function (e) {
+            if (_this.$store.state.friend_list_id.indexOf(e.post.user_id) > -1) {
+                _this.$store.commit('update_posts', e.post);
+            }
+        });
     },
 
     components: {
         Like: __WEBPACK_IMPORTED_MODULE_0__Like_vue___default.a
     },
+    created: function created() {
+        var _this2 = this;
+
+        this.interval = setInterval(function () {
+            // setting this will trigger computed re-evaluation
+            _this2.posts = _this2.$store.getters.allPosts;
+        }, 500);
+    },
+
     methods: {
         get_feed: function get_feed() {
-            var _this = this;
+            var _this3 = this;
 
             axios.get('/feed').then(function (response) {
                 response.data.forEach(function (post) {
-                    _this.$store.commit('addPosts', post);
+                    _this3.$store.commit('addPosts', post);
                 });
                 //                            console.log(response);
             });
@@ -49877,6 +49914,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
         this.get_auth_user_data();
+        this.get_user_friend_list_id();
+        this.get_user_friend_list();
     },
 
     methods: {
@@ -49886,6 +49925,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             axios.get('/get_auth_user_data').then(function (response) {
                 _this.$store.commit('auth_user_data', response.data);
                 console.log(response);
+            });
+        },
+        get_user_friend_list_id: function get_user_friend_list_id() {
+            var _this2 = this;
+
+            axios.get('/get_user_friend_list_id').then(function (response) {
+                //                            this.$store.commit('populate_friend_list', response.data);
+                //                            console.log(response.data);
+                response.data.forEach(function (e) {
+                    _this2.$store.commit('populate_friend_list_id', e);
+                });
+            });
+        },
+        get_user_friend_list: function get_user_friend_list() {
+            var _this3 = this;
+
+            axios.get('/get_user_friend_list').then(function (response) {
+                response.data.forEach(function (e) {
+                    _this3.$store.commit('populate_friend_list', e);
+                });
             });
         }
     }
@@ -56090,6 +56149,277 @@ if(false) {
  }
  // When the module is disposed, remove the <style> tags
  module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(122)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(120),
+  /* template */
+  __webpack_require__(119),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\wamp64\\www\\social-networking\\resources\\assets\\js\\components\\FriendList.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] FriendList.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-77a1e3d8", Component.options)
+  } else {
+    hotAPI.reload("data-v-77a1e3d8", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('ul', _vm._l((_vm.friends), function(friend) {
+    return _c('li', [_c('a', {
+      attrs: {
+        "href": '/profile/' + friend.slug
+      }
+    }, [_vm._v(" " + _vm._s(friend.name) + " ")])])
+  }))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-77a1e3d8", module.exports)
+  }
+}
+
+/***/ }),
+/* 120 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        this.get_friends();
+    },
+
+    props: ['profile_user_id'],
+    data: function data() {
+        return {
+            friends: []
+        };
+    },
+
+    methods: {
+        get_friends: function get_friends() {
+            var _this = this;
+
+            axios.get('/get_user_friend_list/' + this.profile_user_id).then(function (response) {
+                response.data.forEach(function (e) {
+                    _this.friends.push(e);
+                });
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(52)();
+exports.push([module.i, "\n.searched-user {\n    border-radius: 50%;\n}\n", ""]);
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(121);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(68)("14a2e29f", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-77a1e3d8!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./FriendList.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-rewriter.js?id=data-v-77a1e3d8!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./FriendList.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 123 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Like_vue__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_Like_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__components_Like_vue__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        this.get_users_feed();
+    },
+
+    components: {
+        Like: __WEBPACK_IMPORTED_MODULE_0__components_Like_vue___default.a
+    },
+    props: ['user_id'],
+    data: function data() {
+        return {
+            users_post: []
+        };
+    },
+
+    methods: {
+        get_users_feed: function get_users_feed() {
+            var _this = this;
+
+            axios.get('/users_feed/' + this.user_id).then(function (response) {
+                response.data.forEach(function (e) {
+                    _this.users_post.push(e);
+                });
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(123),
+  /* template */
+  __webpack_require__(125),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "C:\\wamp64\\www\\social-networking\\resources\\assets\\js\\components\\UsersFeed.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] UsersFeed.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-2eda87fa", Component.options)
+  } else {
+    hotAPI.reload("data-v-2eda87fa", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-lg-10 col-lg-offset-1"
+  }, _vm._l((_vm.users_post), function(post) {
+    return _c('div', {
+      staticClass: "panel panel-default"
+    }, [_c('div', {
+      staticClass: "panel-heading"
+    }, [_c('img', {
+      staticClass: "avatar-feed",
+      attrs: {
+        "src": post.user.avatar,
+        "alt": "",
+        "width": "40px",
+        "height": "40px"
+      }
+    }), _vm._v("\n                " + _vm._s(post.user.name) + "\n                "), _c('span', {
+      staticClass: "pull-right"
+    }, [_vm._v(" " + _vm._s(post.created_at) + " ")])]), _vm._v(" "), _c('div', {
+      staticClass: "panel-body"
+    }, [_c('p', {
+      staticClass: "text-center"
+    }, [_vm._v("  " + _vm._s(post.content) + " ")])])])
+  }))])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-2eda87fa", module.exports)
+  }
 }
 
 /***/ })

@@ -37,6 +37,20 @@
                     </div>
                 </div>
             @endif
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p class="text-center">
+                        {{ $user->name  }}'s Friends List
+                    </p>
+                </div>
+                <div class="panel-body">
+                    <div class="body">
+                        <friend-list :profile_user_id="{{ $user->id  }}"></friend-list>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="col-lg-6">
@@ -52,6 +66,11 @@
                     </p>
                 </div>
             </div>
+
+            <div class="panel panel-default">
+                <users-feed :user_id="{{ $user->id }}"></users-feed>
+            </div>
+
         </div>
 
     </div>

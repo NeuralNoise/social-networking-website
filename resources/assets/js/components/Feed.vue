@@ -25,10 +25,23 @@
 
     export default {
         mounted() {
-            this.get_feed()
+            this.get_feed();
+            let channel = Echo.private('new-post-create')
+                    .listen('NewPostCreated', (e) => {
+                        if(this.$store.state.friend_list_id.indexOf(e.post.user_id) > -1){
+                            this.$store.commit('update_posts', e.post);
+                        }
+                    });
         },
         components : {
             Like
+        },
+        created () {
+            this.interval = setInterval(() => {
+                // setting this will trigger computed re-evaluation
+                this.posts = this.$store.getters.allPosts;
+            }, 500);
+
         },
         methods : {
             get_feed() {

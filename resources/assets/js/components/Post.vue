@@ -32,8 +32,8 @@
             createPost() {
                 axios.post('/create/post', { content : this.content })
                         .then((response) => {
-                           console.log(response);
                             this.content = "";
+                            this.$store.commit('update_posts', response.data);
                             noty({
                                 layout: 'topRight',
                                 type : 'success',

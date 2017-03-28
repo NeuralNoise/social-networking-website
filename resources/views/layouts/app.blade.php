@@ -46,6 +46,7 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
                         @if(Auth::check())
+                            <li><a href="/home">Home</a></li>
                             <li><a href="{{ route('profile', ['slug' => Auth::user()->slug])  }}">My Profile</a></li>&nbsp;
                             <unread></unread>
                         @endif

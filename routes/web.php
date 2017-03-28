@@ -65,6 +65,21 @@ Route::group(['middleware' => 'auth'], function () {
        return Auth::user();
     });
 
+    Route::get('/get_user_friend_list_id', function() {
+        return Auth::user()->friendsIds();
+    });
+
+    Route::get('/get_user_friend_list/{id?}', function( $id = null) {
+        if($id != null) {
+            $friends = App\User::find($id)->friends();
+            return $friends;
+        }
+        return Auth::user()->friends();
+    });
+
+    Route::get('/users_feed/{id}', 'FeedsController@users_feed');
+
+
     Route::get('/like/{id}', 'LikeController@like');
     Route::get('/unlike/{id}', 'LikeController@unlike');
 
